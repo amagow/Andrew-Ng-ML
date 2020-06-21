@@ -115,7 +115,7 @@ U, S = pca(X_scaled)
 #  Visualize the top 36 eigenvectors found
 displayData(U[:, :100].T, figsize=(8, 8))    
 
-K = 150
+K = 350
 Z = projectData(X_scaled, U, K)    
 
 #  Project images to the eigen space using the top K eigen vectors and 

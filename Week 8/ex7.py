@@ -7,6 +7,9 @@ import matplotlib as mpl
 # from IPython.display import HTML, display, clear_output
 # from scipy import optimize
 from scipy.io import loadmat
+from sklearn import preprocessing
+import ex7_pca 
+
 try:
     pyplot.rcParams["animation.html"] = "jshtml"
 except ValueError:
@@ -181,12 +184,42 @@ ax[1].imshow(X_recovered)
 ax[1].set_title('Compressed, with %d colors' % K)
 ax[1].grid(False)
 
+# ---------------------------------------------------------------------------- #
+#Run K-Means On Picture to use K-Means for 3D visualisation
+# ---------------------------------------------------------------------------- #
+
+A = mpl.image.imread("bird_small.png")
+
+X = A.reshape(-1, 3)
+
+K = 16
+max_iters = 10
+initial_centroids = kMeansInitCentroids(X, K)
+centroids, idx = runkMeans(X, initial_centroids,
+                                 findClosestCentroids,
+                                 computeCentroids, max_iters)
+
+sel = np.random.choice(X.shape[0], size=1000)
+
+fig = pyplot.figure(figsize=(6, 6))
+ax = fig.add_subplot(111, projection='3d')
+
+ax.scatter(X[sel, 0], X[sel, 1], X[sel, 2], cmap='rainbow', c=idx[sel], s=8**2)
+ax.set_title('Pixel dataset plotted in 3D.\nColor shows centroid memberships')
 
 
 
+X_scaled = preprocessing.scale((X))
 
+U, S = ex7_pca.pca(X_scaled)
+Z = ex7_pca.projectData(X_scaled, U, 2)
 
+fig = pyplot.figure(figsize=(6, 6))
+ax = fig.add_subplot(111)
 
+ax.scatter(Z[sel, 0], Z[sel, 1], cmap='rainbow', c=idx[sel], s=64)
+ax.set_title('Pixel dataset plotted in 2D, using PCA for dimensionality reduction')
+ax.grid(False)
 
 
 
